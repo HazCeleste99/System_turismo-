@@ -9,52 +9,41 @@
 class Core
 {
 
-    private $Controller = 'Pages';
-    private $method = 'index';
-    private $param = [];
+    private $controlador = 'Pages';
+    private $metodo = 'index';
+    private $parametros = [];
 
-    public function __construct()
-    {
+    public function __construct(){
+        $url = $this->url() ? $this->url() : [0];
 
-        $url = $this->getUrl();
+        if(file_exists('../app/Controllers/'.ucwords($url[0]).'.php')):
+            $this->controlador= ucwords($url[0]);
+            unset($url[0]);
+        endif;
 
-        if (isset($url[0])) {
-            if (file_exists('../app/controllers/' . ucwords($url[0]) . '.php')) {
-                $this->Controller = ucwords($url[0]);
-                unset($url[0]);
-            }
-        }
+        require_once '../app/Controllers/'.$this->controlador.'.php';
+        $this->controlador = new $this->controlador;
 
-        //require the controller
-        require_once '../app/controllers/' . $this->Controller . '.php';
-
-        //instantiation of controller
-        $this->Controller = new $this->Controller;
-
-        if (isset($url[1])) {
-            if (method_exists($this->Controller, $url[1])) {
-                $this->method = $url[1];
+        if(isset($url[1])):
+            if(method_exists($this->controlador, $url[1])):
+                $this->metodo = $url[1];
                 unset($url[1]);
-            }
-        }
+            endif;
+        endif;
 
-        $this->param = $url ? array_values($url) : []; //ternary operator 
+        $this->parametros = $url ? array_values($url) : [];
+        call_user_func_array([$this->controlador, $this->metodo], $this->parametros);
 
-        //call the function
-        call_user_func_array([$this->Controller, $this->method], $this->param);
+       
     }
 
-    public function getUrl()
-    {
-
-        if (isset($_GET['url'])) {
-
-            $url = $_GET['url'];
-            $url = filter_var($url, FILTER_SANITIZE_URL);
-            $url = rtrim($url, '/');
+    private function url(){
+        $url = filter_input(INPUT_GET, 'url', FILTER_SANITIZE_URL);
+        if(isset($url)):
+            $url = trim(rtrim($url,'/'));
             $url = explode('/', $url);
-
             return $url;
-        }
+        endif;
+
     }
 }

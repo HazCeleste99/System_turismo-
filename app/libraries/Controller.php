@@ -6,7 +6,7 @@ class Controller {
 	//load model
 	public function model($model){
 		/* reqire model file */
-		require_once '../app/models/' . $model . '.php';
+		require_once '../app/Models/' . $model . '.php';
 
 		/* instaciar model */
 		return new $model;
@@ -15,12 +15,15 @@ class Controller {
 	/* load view */
 	public function view($view, $data = []){
 		/* check for view file */
-		if(file_exists('../app/views/' . $view . '.php')){
-			require_once '../app/views/' . $view . '.php';
-			} else {
+
+		$files=('../app/Views/' . $view . '.php');
+		
+		if(file_exists($files)):
+			require_once $files;
+		else:
 				// view does not exists
-				die('La página solicitada no existe.');
-			}
+			die('La página solicitada no existe.');
+		endif;
 	}
 
 }

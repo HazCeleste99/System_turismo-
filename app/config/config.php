@@ -3,7 +3,7 @@
 //app link
 
 define('APPROOT', dirname(dirname(__FILE__)));
-define('URLROOT', 'http://localhost/System_turismo-/');
+define('URLROOT', 'http://localhost/System_ViajeTurismo/');
 define('APPNAME', 'turismo');
 
 
